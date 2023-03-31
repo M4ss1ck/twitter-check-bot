@@ -1,4 +1,4 @@
-import { Composer } from "telegraf";
+import { Composer, Markup } from "telegraf";
 import { prisma } from "../db/prisma.js";
 import { logger } from "../logger/index.js";
 import { getUserByUsername, getFollowers, getFollowing } from "../utils/twitter.js";
@@ -100,7 +100,12 @@ commands.command('followers', async ctx => {
             }
 
             const text = `You have ${newFollowers.length} new followers\n${noLongerFollowers.length} users stop following you\n\nTotal: ${previousFollowers.length + newFollowers.length - noLongerFollowers.length}`
-            ctx.reply(text)
+            ctx.reply(text, {
+                parse_mode: 'HTML',
+                ...Markup.inlineKeyboard([
+                    Markup.button.callback('Export List', `exportFollowers_${user.id}`)
+                ])
+            })
         } else {
             ctx.reply('It seems like you haven\'t set you Twitter ID. You can use <code>/get username</code>, where <code>username</code> is your Twitter handle, to get your Twitter ID, then use <code>/myid id</code> replacing <code>id</code> with the value you just got and then try this command again.', {
                 parse_mode: "HTML"
