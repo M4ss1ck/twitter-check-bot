@@ -23,3 +23,11 @@ export const getFollowing = async (id: string) => {
         logger.error(error)
     }
 }
+
+export const getUserByUsername = async (username: string) => {
+    try {
+        return await twClient.v2.userByUsername(username)
+    } catch (error) {
+        logger.error(error)
+    }
+}
