@@ -20,4 +20,31 @@ commands.command('get', async ctx => {
     }
 })
 
-// myid command
+commands.command('myid', async ctx => {
+    if (ctx.chat.type === 'private') {
+        const id = ctx.message.text.replace(/^\/myid(@\w+)?/, '').trim()
+        if (id.length > 3) {
+            const user = await prisma.user.upsert({
+                where: {
+                    tgId: ctx.from.id.toString(),
+                },
+                update: {
+                    tgId: ctx.from.id.toString(),
+                    name: ctx.from.first_name,
+                    twId: id,
+                },
+                create: {
+                    tgId: ctx.from.id.toString(),
+                    name: ctx.from.first_name,
+                    twId: id,
+                }
+            })
+            logger.info(user)
+            ctx.reply(user ? 'Your id was updated' : 'Your id couldn\'t be updated... Contact the admin.')
+        } else {
+            ctx.reply('Type your Twitter ID as in <code>/myid 1234567890</code>', {
+                parse_mode: 'HTML'
+            })
+        }
+    }
+})
