@@ -12,7 +12,7 @@ validator.use(async (ctx, next) => {
                 tgId,
             }
         })
-        if (currentUser) {
+        if (!currentUser) {
             return ctx.reply(`You are not allowed to use this bot, contact <a href="tg://user?id=${ADMIN_ID}">my owner</a>.`, {
                 parse_mode: "HTML"
             })
