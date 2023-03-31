@@ -19,12 +19,14 @@ model User {
 }
 
 model TwUser {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   twId      String // twitter id
   name      String
   username  String
-  follower  Boolean @default(false)
-  following Boolean @default(false)
-  user      User    @relation(fields: [userId], references: [id])
+  follower  Boolean  @default(false)
+  following Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
   userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
