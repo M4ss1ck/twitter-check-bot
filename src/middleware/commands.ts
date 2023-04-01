@@ -13,7 +13,10 @@ commands.command('get', async ctx => {
         if (username.length > 3) {
             const user = await getUserByUsername(username)
             logger.info(user)
-            ctx.reply('check terminal for response from server')
+            const text = JSON.stringify(user, null, 2)
+            ctx.reply(text, {
+                parse_mode: 'HTML'
+            })
         } else {
             ctx.reply('Type an username next to the command as in <code>/get m4ss1ck</code>', {
                 parse_mode: 'HTML'
