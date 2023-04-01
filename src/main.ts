@@ -5,6 +5,7 @@ import { validator } from "./middleware/validator.js";
 import { start } from "./middleware/start.js";
 import { commands } from "./middleware/commands.js";
 import { actions } from "./middleware/actions.js";
+import { admin } from "./middleware/admin.js";
 
 const bot = new Telegraf(TOKEN);
 
@@ -13,6 +14,7 @@ bot.command('test', ctx => {
 })
 
 bot
+    .use(admin)
     .use(validator)
     .use(start)
     .use(commands)
