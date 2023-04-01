@@ -42,7 +42,7 @@ actions.action(/^exportFollowers_\d+/i, async ctx => {
             const success = await csvExport(path, data, headers)
             if (success) {
                 await ctx.replyWithDocument((Input.fromLocalFile(path)), {
-                    caption: 'Accounts that stopped following you'
+                    caption: 'List of accounts related to you'
                 }).catch(logger.error)
                 await unlink(path)
             }
