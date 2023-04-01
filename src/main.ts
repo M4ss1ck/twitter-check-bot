@@ -7,7 +7,9 @@ import { commands } from "./middleware/commands.js";
 import { actions } from "./middleware/actions.js";
 import { admin } from "./middleware/admin.js";
 
-const bot = new Telegraf(TOKEN);
+const bot = new Telegraf(TOKEN, {
+    handlerTimeout: 9000000
+});
 
 bot.command('test', ctx => {
     ctx.reply('tested', { reply_to_message_id: ctx.message?.message_id })
