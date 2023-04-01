@@ -1,7 +1,9 @@
-import { Composer, Markup } from "telegraf";
+import { Composer, Markup, Input } from "telegraf";
 import { prisma } from "../db/prisma.js";
 import { logger } from "../logger/index.js";
 import { getUserByUsername, allFollowerData, allFollowingData, FullUser } from "../utils/twitter.js";
+import { csvExport } from "../utils/csvExport.js";
+import { unlink } from "fs/promises";
 
 export const commands = new Composer()
 
@@ -63,6 +65,46 @@ commands.command('followers', async ctx => {
         })
         if (user && user.twId) {
             const { total, news, nopes } = await allFollowerData(user as FullUser)
+            if (news.length > 0) {
+                const path = `New_followers_${user.tgId}.csv`
+                const data = news.map(user => ({
+                    twId: user.id,
+                    name: user.name,
+                    username: `@${user.username}`,
+                }))
+                const headers = [
+                    { id: 'twId', title: 'Twitter ID' },
+                    { id: 'name', title: 'Name' },
+                    { id: 'username', title: 'Twitter handle' },
+                ]
+                const success = await csvExport(path, data, headers)
+                if (success) {
+                    await ctx.replyWithDocument(Input.fromLocalFile(path), {
+                        caption: 'Accounts that started following you'
+                    }).catch(logger.error)
+                    await unlink(path)
+                }
+            }
+            if (nopes.length > 0) {
+                const path = `No_longer_followers_${user.tgId}.csv`
+                const data = nopes.map(user => ({
+                    twId: user.twId,
+                    name: user.name,
+                    username: `@${user.username}`,
+                }))
+                const headers = [
+                    { id: 'twId', title: 'Twitter ID' },
+                    { id: 'name', title: 'Name' },
+                    { id: 'username', title: 'Twitter handle' },
+                ]
+                const success = await csvExport(path, data, headers)
+                if (success) {
+                    await ctx.replyWithDocument((Input.fromLocalFile(path)), {
+                        caption: 'Accounts that stopped following you'
+                    }).catch(logger.error)
+                    await unlink(path)
+                }
+            }
             const text = `You have ${news.length} new followers\n${nopes.length} accounts stop following you\n\nTotal: ${total}`
             ctx.telegram.editMessageText(ctx.chat.id, message.message_id, undefined, text, {
                 parse_mode: 'HTML',
@@ -92,6 +134,46 @@ commands.command('following', async ctx => {
         })
         if (user && user.twId) {
             const { total, news, nopes } = await allFollowingData(user as FullUser)
+            if (news.length > 0) {
+                const path = `New_followings_${user.tgId}.csv`
+                const data = news.map(user => ({
+                    twId: user.id,
+                    name: user.name,
+                    username: `@${user.username}`,
+                }))
+                const headers = [
+                    { id: 'twId', title: 'Twitter ID' },
+                    { id: 'name', title: 'Name' },
+                    { id: 'username', title: 'Twitter handle' },
+                ]
+                const success = await csvExport(path, data, headers)
+                if (success) {
+                    await ctx.replyWithDocument(Input.fromLocalFile(path), {
+                        caption: 'Accounts that you started following'
+                    }).catch(logger.error)
+                    await unlink(path)
+                }
+            }
+            if (nopes.length > 0) {
+                const path = `No_longer_followings_${user.tgId}.csv`
+                const data = nopes.map(user => ({
+                    twId: user.twId,
+                    name: user.name,
+                    username: `@${user.username}`,
+                }))
+                const headers = [
+                    { id: 'twId', title: 'Twitter ID' },
+                    { id: 'name', title: 'Name' },
+                    { id: 'username', title: 'Twitter handle' },
+                ]
+                const success = await csvExport(path, data, headers)
+                if (success) {
+                    await ctx.replyWithDocument(Input.fromLocalFile(path), {
+                        caption: 'Accounts that you stopped following'
+                    }).catch(logger.error)
+                    await unlink(path)
+                }
+            }
             const text = `You are following ${news.length} new accounts\nYou stopped following ${nopes.length} accounts\n\nTotal: ${total}`
             ctx.telegram.editMessageText(ctx.chat.id, message.message_id, undefined, text, {
                 parse_mode: 'HTML',
