@@ -6,9 +6,9 @@ import { unlink } from "fs/promises";
 
 export const actions = new Composer()
 
-actions.action(/^exportFollowers_\d+/i, async ctx => {
+actions.action(/^exportAll_\d+/i, async ctx => {
     if ('data' in ctx.callbackQuery) {
-        const userId = ctx.callbackQuery.data.replace(/^exportFollowers_/i, '').trim()
+        const userId = ctx.callbackQuery.data.replace(/^exportAll_/i, '').trim()
         if (!ctx.from || ctx.from.id.toString() !== userId) {
             await ctx.answerCbQuery('this is not your data')
         }

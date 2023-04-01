@@ -112,7 +112,7 @@ commands.command('followers', async ctx => {
             ctx.telegram.editMessageText(ctx.chat.id, message.message_id, undefined, text, {
                 parse_mode: 'HTML',
                 ...Markup.inlineKeyboard([
-                    Markup.button.callback('Export List', `exportFollowers_${user.tgId}`)
+                    Markup.button.callback('Export List', `exportAll_${user.tgId}`)
                 ])
             }).catch(logger.error)
         } else {
@@ -181,7 +181,7 @@ commands.command('following', async ctx => {
             ctx.telegram.editMessageText(ctx.chat.id, message.message_id, undefined, text, {
                 parse_mode: 'HTML',
                 ...Markup.inlineKeyboard([
-                    Markup.button.callback('Export List', `exportFollowings_${user.tgId}`)
+                    Markup.button.callback('Export List', `exportAll_${user.tgId}`)
                 ])
             }).catch(logger.error)
         } else {
